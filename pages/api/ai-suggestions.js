@@ -18,8 +18,14 @@ const TIMEOUT_MS     = 40_000; // longer timeout for rich analysis
 // ---------------------------------------------------------------------------
 // Gemini prompt — asks for the full structured JSON analysis
 // ---------------------------------------------------------------------------
-function buildPrompt(resumeText) {
+function buildPrompt(resumeText, jobTitle) {
+  const jobContext = jobTitle
+    ? `The candidate is targeting the role: "${jobTitle}". Tailor ALL feedback, keyword suggestions, and rewrite examples specifically for this role. Compare the resume against what a hiring manager for "${jobTitle}" positions would expect to see.`
+    : `Infer the target role from the resume content and tailor feedback accordingly.`;
+
   return `You are an elite ATS resume analyst and professional resume coach with 15+ years of experience at top recruiting firms. You have reviewed over 50,000 resumes for FAANG, Fortune 500, and top consulting firms.
+
+${jobContext}
 
 Analyse the resume below with extreme precision. Your feedback must be:
 - Directly tied to ACTUAL content found in this specific resume
@@ -30,6 +36,7 @@ Analyse the resume below with extreme precision. Your feedback must be:
 Return ONLY a valid JSON object (no markdown, no extra text). Use this exact structure:
 
 {
+  "targetRole": <string — the role being targeted>,
   "estimatedScoreAfterFixes": <number 0-100>,
   "strengths": [<string>],
   "criticalIssues": [{"title": <string>, "whyItHurts": <string>, "howToFix": <string>, "before": <string>, "after": <string>}],
@@ -50,12 +57,13 @@ RULES:
 4. lowPriority: Polish items. Max 3.
 5. topImprovements: The 5 highest-impact changes ranked 1 (highest) to 5.
 6. rewriteSuggestions: Take ACTUAL weak bullets from the resume and rewrite them with STAR format + metrics. Min 2, max 4.
-7. keywordSuggestions: Infer the target role from the resume content and suggest 5-8 missing high-value ATS keywords.
+7. keywordSuggestions: Suggest 5-8 missing high-value ATS keywords specifically relevant to the target role. If job title is provided, use it to determine which keywords matter most.
 8. atsCompatibility: Check for: missing email, missing phone, missing dates, no summary section, no experience section, no skills section, multi-column layout signals, tables/graphics indicators.
-9. recruiterFeedback: Write as if you are a recruiter seeing this resume for the first time. Be honest but constructive.
+9. recruiterFeedback: Write as if you are a recruiter hiring for "${jobTitle || 'this role'}" seeing this resume for the first time. Be honest but constructive.
 10. strengths: List 2-4 genuine strengths you found in this resume. Be specific, not generic.
-11. NEVER invent information not present in the resume.
-12. ALWAYS quote actual lines from the resume in before/after examples.
+11. targetRole: State the role being targeted (use provided job title if given, otherwise infer from resume).
+12. NEVER invent information not present in the resume.
+13. ALWAYS quote actual lines from the resume in before/after examples.
 
 Resume text:
 ---
@@ -321,14 +329,14 @@ function parseAnalysisJson(raw) {
 // ---------------------------------------------------------------------------
 // Gemini call
 // ---------------------------------------------------------------------------
-async function callGemini(resumeText) {
+async function callGemini(resumeText, jobTitle) {
   const isOAuth = GEMINI_API_KEY && !GEMINI_API_KEY.startsWith('AIza');
   const url = isOAuth ? GEMINI_URL : `${GEMINI_URL}?key=${GEMINI_API_KEY}`;
   const headers = { 'Content-Type': 'application/json' };
   if (isOAuth) headers['Authorization'] = `Bearer ${GEMINI_API_KEY}`;
 
   const body = {
-    contents: [{ parts: [{ text: buildPrompt(resumeText) }] }],
+    contents: [{ parts: [{ text: buildPrompt(resumeText, jobTitle) }] }],
     generationConfig: { maxOutputTokens: 4096, temperature: 0.3 },
   };
 
@@ -359,10 +367,10 @@ async function callGemini(resumeText) {
 // ---------------------------------------------------------------------------
 // Claude call
 // ---------------------------------------------------------------------------
-async function callClaude(resumeText) {
+async function callClaude(resumeText, jobTitle) {
   const body = {
     model: CLAUDE_MODEL, max_tokens: 4096,
-    messages: [{ role: 'user', content: buildPrompt(resumeText) }],
+    messages: [{ role: 'user', content: buildPrompt(resumeText, jobTitle) }],
   };
 
   const controller = new AbortController();
@@ -404,24 +412,26 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { text, score } = req.body || {};
+  const { text, score, jobTitle } = req.body || {};
   if (!text || typeof text !== 'string' || text.trim().length === 0) {
     return res.status(400).json({ error: 'Request body must include a non-empty "text" field.' });
   }
+
+  const targetRole = (jobTitle && typeof jobTitle === 'string') ? jobTitle.trim() : '';
 
   try {
     let analysis;
 
     if (PROVIDER === 'gemini' && GEMINI_API_KEY) {
       try {
-        analysis = await callGemini(text);
+        analysis = await callGemini(text, targetRole);
       } catch (err) {
         console.warn('[ai-suggestions] Gemini failed, falling back to rule-based:', err.message);
         analysis = getRuleBasedAnalysis(text);
       }
     } else if (PROVIDER === 'claude' && CLAUDE_API_KEY) {
       try {
-        analysis = await callClaude(text);
+        analysis = await callClaude(text, targetRole);
       } catch (err) {
         console.warn('[ai-suggestions] Claude failed, falling back to rule-based:', err.message);
         analysis = getRuleBasedAnalysis(text);
@@ -430,7 +440,9 @@ export default async function handler(req, res) {
       analysis = getRuleBasedAnalysis(text);
     }
 
-    // Merge current score into response for convenience
+    // Include the target role in the response so the UI can display it
+    if (targetRole && !analysis.targetRole) analysis.targetRole = targetRole;
+
     return res.status(200).json({ ...analysis, currentScore: score || null });
 
   } catch (err) {
