@@ -11,7 +11,6 @@
 
 const { IncomingForm } = require('formidable');
 const fs       = require('fs');
-const pdfParse = require('pdf-parse');
 const mammoth  = require('mammoth');
 
 const { checkParseability }   = require('../../lib/parseabilityCheck');
@@ -95,16 +94,15 @@ function classifyPdfError(err) {
 }
 
 // Extracts text from a PDF buffer using pdf-parse.
-// Throws a classified error object with a `kind` property so the handler
-// can respond with the correct ERR message without string-matching again.
+// Imported dynamically to avoid Vercel serverless startup issues with pdf-parse.
 async function extractPdfText(file) {
+  const pdfParse = require('pdf-parse');
   const buffer = await fs.promises.readFile(file.filepath);
   try {
     const data = await pdfParse(buffer);
     return { text: data.text, pageCount: data.numpages };
   } catch (err) {
     const kind = classifyPdfError(err);
-    // Attach classification to the error so the outer handler can use it
     err._pdfKind = kind;
     throw err;
   }
