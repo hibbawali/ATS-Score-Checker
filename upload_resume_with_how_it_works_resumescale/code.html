@@ -1,0 +1,285 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Upload Your Resume | Career Engine AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ffb77d",
+                        "on-tertiary-fixed-variant": "#6e3900",
+                        "secondary": "#006c4a",
+                        "surface-bright": "#f7f9fb",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "outline": "#737686",
+                        "on-secondary-container": "#00714e",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#ffede1",
+                        "on-surface-variant": "#434655",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#d8dadc",
+                        "secondary-fixed-dim": "#68dba9",
+                        "surface": "#f7f9fb",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "primary-fixed": "#dbe1ff",
+                        "surface-tint": "#0053db",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "secondary-fixed": "#85f8c4",
+                        "surface-container-high": "#e6e8ea",
+                        "tertiary": "#824500",
+                        "secondary-container": "#82f5c1",
+                        "primary": "#004ac6",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdcc3",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#a65900",
+                        "on-background": "#191c1e",
+                        "on-primary-fixed": "#00174b",
+                        "on-secondary-fixed": "#002114",
+                        "outline-variant": "#c3c6d7",
+                        "primary-container": "#2563eb",
+                        "on-tertiary-fixed": "#2f1500",
+                        "on-surface": "#191c1e",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-low": "#f2f4f6",
+                        "inverse-primary": "#b4c5ff",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#005137",
+                        "on-primary-container": "#eeefff",
+                        "surface-container": "#eceef0",
+                        "inverse-surface": "#2d3133",
+                        "background": "#f7f9fb"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-max": "1200px",
+                        "xl": "40px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "base": "4px",
+                        "gutter": "24px",
+                        "md": "16px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-md": ["Inter"],
+                        "label-sm": ["Geist"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Geist"],
+                        "display-lg": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .drag-over {
+            @apply border-primary bg-primary-container/10;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Focused Header (No Nav as per Rule 3) -->
+
+<main class="min-h-[calc(100vh-64px)] flex flex-col">
+<!-- Hero / Upload Section -->
+<section class="relative py-xl px-lg overflow-hidden flex-shrink-0">
+<!-- Animated Subtle Background -->
+<div class="absolute inset-0 -z-10 opacity-30">
+<webgl-shader class="w-full h-full" src="{{DATA:ANIMATION:ANIMATION_1}}"></webgl-shader>
+</div>
+<div class="max-w-[800px] mx-auto text-center flex flex-col items-center">
+<div class="mb-lg inline-flex items-center gap-sm bg-primary-container px-md py-xs rounded-full text-on-primary-container text-label-sm">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+                    SECURE AI UPLOAD
+                </div>
+<h1 class="text-display-lg text-on-background mb-md font-bold">Optimize your resume for the next generation of hiring.</h1>
+<p class="text-body-lg text-on-surface-variant mb-xl max-w-[600px]">Our AI analyzes your experience against real-world ATS algorithms to help you land the interview.</p>
+<!-- Upload Area -->
+<div class="w-full bg-surface-container-lowest border-2 border-dashed border-outline-variant rounded-xl p-xl flex flex-col items-center justify-center transition-all hover:border-primary group cursor-pointer" id="drop-zone">
+<div class="w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mb-md group-hover:bg-primary-fixed transition-colors">
+<span class="material-symbols-outlined text-[32px] text-primary">cloud_upload</span>
+</div>
+<h3 class="text-title-md text-on-surface mb-xs">Drag and drop your resume</h3>
+<p class="text-label-md text-on-surface-variant mb-lg">PDF, DOCX up to 10MB</p>
+<label class="bg-primary text-on-primary px-xl py-md rounded-xl font-semibold cursor-pointer hover:bg-primary/90 transition-shadow shadow-lg shadow-primary/20">
+                        Choose File
+                        <input accept=".pdf,.docx" class="hidden" type="file">
+</label>
+</div>
+<!-- Trust Indicators -->
+<div class="mt-xl grid grid-cols-1 md:grid-cols-3 gap-lg w-full">
+<div class="flex items-center gap-sm justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">security</span>
+<span class="text-label-md">Data Privacy Secured</span>
+</div>
+<div class="flex items-center gap-sm justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">bolt</span>
+<span class="text-label-md">Results in 3 Seconds</span>
+</div>
+<div class="flex items-center gap-sm justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-secondary">insights</span>
+<span class="text-label-md">ATS-Level Insights</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SHARED COMPONENT: How it Works -->
+<section class="bg-surface-container-low border-y border-outline-variant py-xl">
+<div class="max-w-[960px] mx-auto">
+<h2 class="text-headline-lg text-on-surface font-bold px-lg mb-lg text-center md:text-left">How it Works</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md px-lg">
+<!-- Step 1 -->
+<div class="flex flex-col gap-md rounded-xl border border-outline-variant bg-surface-container-lowest p-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">upload_file</span>
+</div>
+<div class="flex flex-col gap-sm">
+<h3 class="text-title-md text-on-surface font-bold">1. Upload</h3>
+<p class="text-on-surface-variant text-body-md">Securely upload your resume in PDF or DOCX format. Your data is encrypted and never shared.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col gap-md rounded-xl border border-outline-variant bg-surface-container-lowest p-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">memory</span>
+</div>
+<div class="flex flex-col gap-sm">
+<h3 class="text-title-md text-on-surface font-bold">2. Analyze</h3>
+<p class="text-on-surface-variant text-body-md">Our AI-powered ATS checker scans for keywords, formatting, and impact metrics.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col gap-md rounded-xl border border-outline-variant bg-surface-container-lowest p-lg shadow-sm hover:shadow-md transition-shadow">
+<div class="w-12 h-12 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+</div>
+<div class="flex flex-col gap-sm">
+<h3 class="text-title-md text-on-surface font-bold">3. Improve</h3>
+<p class="text-on-surface-variant text-body-md">Get a detailed score and actionable suggestions to land more interviews and higher offers.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container-highest mt-auto py-xl border-t border-outline-variant">
+<div class="max-w-[1200px] mx-auto px-lg">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-xl">
+<div class="col-span-1 md:col-span-1">
+<div class="flex items-center gap-xs mb-md">
+<div class="w-6 h-6 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[16px]" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+</div>
+<span class="font-bold text-on-surface">CareerEngine</span>
+</div>
+<p class="text-label-md text-on-surface-variant">The next generation of career tools powered by cutting edge AI analysis.</p>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-md">Product</h4>
+<ul class="space-y-sm text-label-md text-on-surface-variant">
+<li class=""><a class="hover:text-primary transition-colors" href="#">Resume Scan</a></li>
+<li class=""><a class="hover:text-primary transition-colors" href="#">LinkedIn Review</a></li>
+<li class=""><a class="hover:text-primary transition-colors" href="#">Interview Prep</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-md">Company</h4>
+<ul class="space-y-sm text-label-md text-on-surface-variant">
+<li class=""><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
+<li class=""><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+<li class=""><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold text-on-surface mb-md">Support</h4>
+<ul class="space-y-sm text-label-md text-on-surface-variant">
+<li class=""><a class="hover:text-primary transition-colors" href="#">Help Center</a></li>
+<li class=""><a class="hover:text-primary transition-colors" href="#">Contact Us</a></li>
+</ul>
+</div>
+</div>
+<div class="mt-xl pt-lg border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-md">
+<p class="text-label-sm text-outline">© 2024 CareerEngine AI. All rights reserved.</p>
+<div class="flex gap-lg">
+<a class="text-outline hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-outline hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">brand_awareness</span></a>
+<a class="text-outline hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">groups</span></a>
+</div>
+</div>
+</div>
+</footer>
+</main>
+<script>
+        // Simple drag and drop visual feedback
+        const dropZone = document.getElementById('drop-zone');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('drag-over');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('drag-over');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                // Mock behavior for UI demonstration
+                const fileName = files[0].name;
+                const statusText = dropZone.querySelector('h3');
+                statusText.innerText = "Processing: " + fileName;
+                dropZone.querySelector('p').innerText = "Analyzing your resume structure...";
+                dropZone.classList.add('animate-pulse');
+                
+                setTimeout(() => {
+                    alert("Resume '" + fileName + "' has been successfully uploaded for analysis!");
+                    dropZone.classList.remove('animate-pulse');
+                    statusText.innerText = "Drag and drop your resume";
+                    dropZone.querySelector('p').innerText = "PDF, DOCX up to 10MB";
+                }, 2000);
+            }
+        }
+    </script>
+
+
+</body></html>

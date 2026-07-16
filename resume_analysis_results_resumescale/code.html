@@ -1,0 +1,304 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>ResumeScore - ATS Analysis Results</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#0053db",
+                    "on-secondary-container": "#00714e",
+                    "surface-container-low": "#f2f4f6",
+                    "inverse-surface": "#2d3133",
+                    "outline": "#737686",
+                    "error": "#ba1a1a",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#eceef0",
+                    "on-primary-fixed": "#00174b",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-surface-variant": "#434655",
+                    "on-tertiary-fixed-variant": "#6e3900",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#a65900",
+                    "outline-variant": "#c3c6d7",
+                    "tertiary-fixed-dim": "#ffb77d",
+                    "secondary": "#006c4a",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#85f8c4",
+                    "primary": "#004ac6",
+                    "surface-dim": "#d8dadc",
+                    "surface-variant": "#e0e3e5",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#002114",
+                    "on-secondary-fixed-variant": "#005137",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-tertiary-container": "#ffede1",
+                    "secondary-fixed-dim": "#68dba9",
+                    "on-primary-container": "#eeefff",
+                    "on-tertiary-fixed": "#2f1500",
+                    "surface-bright": "#f7f9fb",
+                    "tertiary": "#824500",
+                    "primary-fixed": "#dbe1ff",
+                    "on-background": "#191c1e",
+                    "surface-container-high": "#e6e8ea",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "background": "#f7f9fb",
+                    "tertiary-fixed": "#ffdcc3",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#2563eb",
+                    "secondary-container": "#82f5c1",
+                    "on-surface": "#191c1e",
+                    "surface": "#f7f9fb",
+                    "inverse-primary": "#b4c5ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "xl": "40px",
+                    "lg": "24px",
+                    "base": "4px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "container-max": "1200px",
+                    "xs": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "label-md": ["Geist"],
+                    "display-lg": ["Inter"],
+                    "label-sm": ["Geist"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-background">
+<!-- Shared Navigation Wrapper (Relevance Test: Destination Screen = Include) -->
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-[#f8f9fc] group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-4 md:px-20 lg:px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+<!-- Shared Header Component -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-outline-variant px-4 py-3">
+<div class="flex items-center gap-4 text-on-surface">
+<div class="size-6 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path></svg>
+</div>
+<h2 class="text-on-surface text-lg font-bold leading-tight tracking-tight">ResumeScore</h2>
+</div>
+
+</header>
+<!-- Main Results Section -->
+<main class="py-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-4">
+<div class="flex flex-col gap-1">
+<p class="text-on-surface text-3xl md:text-4xl font-black leading-tight tracking-tight">Analysis Result</p>
+<p class="text-outline text-base font-normal">Scanned by Professional Career Engine v4.2</p>
+</div>
+<button class="flex items-center gap-2 px-6 py-3 bg-primary text-on-primary font-bold rounded-xl hover:bg-surface-tint transition-all shadow-md" onclick="window.history.back()">
+<span class="material-symbols-outlined">upload_file</span>
+                                Check Another Resume
+                            </button>
+</div>
+<!-- Score Visualization -->
+<div class="m-4 p-8 bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm flex flex-col md:flex-row items-center gap-10">
+<div class="relative size-40 flex items-center justify-center">
+<svg class="size-40 progress-ring">
+<circle class="text-surface-container-highest" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-secondary" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-dasharray="440" stroke-dashoffset="66" stroke-linecap="round" stroke-width="12" style="transition: stroke-dashoffset 1s ease-in-out; stroke-dasharray: 439.823, 439.823; stroke-dashoffset: 65.9734;"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-4xl font-black text-on-surface">85</span>
+<span class="text-xs font-bold text-outline uppercase tracking-widest">Score</span>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-4 text-center md:text-left">
+<div>
+<span class="px-3 py-1 bg-secondary text-on-secondary text-sm font-bold rounded-full">EXCELLENT</span>
+<h3 class="mt-3 text-2xl font-bold text-on-surface">Your resume is optimized.</h3>
+<p class="text-outline mt-2 leading-relaxed">You've outperformed 95% of candidates in this category. We've identified a few high-impact refinements to help you reach the top 1%.</p>
+</div>
+<div class="flex flex-wrap gap-4 pt-2">
+<div class="flex items-center gap-2 text-secondary font-medium">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span class="text-sm">ATS Readable</span>
+</div>
+<div class="flex items-center gap-2 text-secondary font-medium">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span class="text-sm">Keyword Rich</span>
+</div>
+<div class="flex items-center gap-2 text-tertiary font-medium">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: &quot;FILL&quot; 1;">error</span>
+<span class="text-sm">2 Critical Issues</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Issues Grouped by Severity -->
+<div class="flex flex-col gap-8 p-4 mt-4">
+<!-- Critical Section -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="px-2 py-0.5 bg-error text-on-error text-xs font-black rounded uppercase tracking-tighter">Critical</span>
+<h2 class="text-on-surface text-xl font-bold">Must Fix (2)</h2>
+</div>
+<div class="space-y-3">
+<div class="group flex flex-col md:flex-row md:items-center gap-4 bg-error-container/20 border border-error/20 p-4 rounded-xl hover:bg-error-container/30 transition-colors cursor-pointer">
+<div class="bg-error text-on-error size-12 rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div class="flex-1">
+<p class="text-on-surface text-base font-bold">Missing Work Experience Dates</p>
+<p class="text-outline text-sm">ATS systems cannot calculate your total experience tenure without specific start and end dates (MM/YYYY).</p>
+</div>
+<span class="material-symbols-outlined text-error opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+<div class="group flex flex-col md:flex-row md:items-center gap-4 bg-error-container/20 border border-error/20 p-4 rounded-xl hover:bg-error-container/30 transition-colors cursor-pointer">
+<div class="bg-error text-on-error size-12 rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">mail</span>
+</div>
+<div class="flex-1">
+<p class="text-on-surface text-base font-bold">Unreachable Contact Info</p>
+<p class="text-outline text-sm">Your email address was found in the header but was formatted as an image or vector, making it unclickable for recruiters.</p>
+</div>
+<span class="material-symbols-outlined text-error opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Warning Section -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="px-2 py-0.5 bg-tertiary text-on-tertiary-container text-xs font-black rounded uppercase tracking-tighter">Warning</span>
+<h2 class="text-on-surface text-xl font-bold">Optimization Needed (1)</h2>
+</div>
+<div class="space-y-3">
+<div class="group flex flex-col md:flex-row md:items-center gap-4 bg-tertiary-fixed/10 border border-tertiary/20 p-4 rounded-xl hover:bg-tertiary-fixed/20 transition-colors cursor-pointer">
+<div class="bg-tertiary text-on-tertiary size-12 rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">key</span>
+</div>
+<div class="flex-1">
+<p class="text-on-surface text-base font-bold">Missing Soft Skills Keywords</p>
+<p class="text-outline text-sm">We couldn't find mentions of "Leadership" or "Problem Solving" which are highly valued for your targeted job title.</p>
+</div>
+<span class="material-symbols-outlined text-tertiary opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Suggestion Section -->
+<section>
+<div class="flex items-center gap-3 mb-4">
+<span class="px-2 py-0.5 bg-primary text-on-primary text-xs font-black rounded uppercase tracking-tighter">Suggestion</span>
+<h2 class="text-on-surface text-xl font-bold">Best Practices (2)</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="flex flex-col gap-3 p-5 bg-surface-container-low border border-outline-variant rounded-xl hover:border-primary transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-weight="fill">lightbulb</span>
+<p class="text-on-surface font-bold">Quantify Achievements</p>
+</div>
+<p class="text-outline text-sm leading-relaxed">Try adding more numbers (%, $, #) to your bullet points to demonstrate concrete impact.</p>
+</div>
+<div class="flex flex-col gap-3 p-5 bg-surface-container-low border border-outline-variant rounded-xl hover:border-primary transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-weight="fill">description</span>
+<p class="text-on-surface font-bold">Page Length Optimization</p>
+</div>
+<p class="text-outline text-sm leading-relaxed">Your resume is currently 2.5 pages. For your experience level, a strict 2-page limit is recommended.</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Action Footer -->
+<div class="mt-12 mb-8 p-10 bg-on-primary-fixed text-on-primary-fixed-variant rounded-3xl overflow-hidden relative">
+<div class="relative z-10 max-w-md">
+<h2 class="text-3xl font-black text-white mb-4">Ready to land that interview?</h2>
+<p class="text-primary-fixed/80 mb-8">Our Professional Career Engine can rewrite your bullet points for maximum impact.</p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="px-8 py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:scale-105 transition-transform">
+                                        Unlock Full AI Editor
+                                    </button>
+<button class="px-8 py-4 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 transition-colors" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                                        Back to Top
+                                    </button>
+</div>
+</div>
+<div class="absolute right-0 bottom-0 top-0 w-1/2 opacity-20 hidden md:block">
+<webgl-shader class="w-full h-full" src="{{DATA:ANIMATION:ANIMATION_1}}"></webgl-shader>
+</div>
+</div>
+</main>
+<footer class="border-t border-outline-variant py-8 px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-outline text-sm">
+<p class="">© 2024 ResumeScore AI. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Help Center</a>
+</div>
+</footer>
+</div>
+</div>
+</div>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate progress circle on load
+            const circle = document.querySelector('.progress-ring circle:last-child');
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
+            
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = circumference;
+
+            const setProgress = (percent) => {
+                const offset = circumference - (percent / 100 * circumference);
+                circle.style.strokeDashoffset = offset;
+            };
+
+            // Small delay for entrance animation
+            setTimeout(() => {
+                setProgress(85);
+            }, 300);
+
+            // Simple click effects for list items
+            const cards = document.querySelectorAll('.group');
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.add('scale-[0.98]');
+                    setTimeout(() => card.classList.remove('scale-[0.98]'), 100);
+                });
+            });
+        });
+    </script>
+
+
+</body></html>
