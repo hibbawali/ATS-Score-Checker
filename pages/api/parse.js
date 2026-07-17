@@ -94,12 +94,9 @@ function classifyPdfError(err) {
 }
 
 // Extracts text from a PDF buffer using pdf-parse.
-// Uses the internal lib path to bypass the test-file loading bug in
-// pdf-parse v2.x which causes crashes on Vercel serverless environments.
+// Uses dynamic require to avoid Vercel serverless startup issues.
 async function extractPdfText(file) {
-  // Importing the internal lib directly skips the index.js test-file loader
-  // that breaks in serverless environments where the package test/ dir is absent.
-  const pdfParse = require('pdf-parse/lib/pdf-parse.js');
+  const pdfParse = require('pdf-parse');
   const buffer = await fs.promises.readFile(file.filepath);
   try {
     const data = await pdfParse(buffer);
