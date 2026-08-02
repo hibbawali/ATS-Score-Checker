@@ -47,6 +47,12 @@ INSTALLED_APPS = [
     'authentication',
     'users',
     'resume',
+    # Phase 2 - ATS Intelligence Engine
+    'ats_intelligence',
+    'job_description_parser',
+    'semantic_matcher',
+    'recommendation_engine',
+    'scoring_engine',
 ]
 
 MIDDLEWARE = [

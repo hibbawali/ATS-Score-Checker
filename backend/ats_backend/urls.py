@@ -24,6 +24,8 @@ urlpatterns = [
     path('api/auth/', include('authentication.urls')),
     path('api/users/', include('users.urls')),
     path('api/resume/', include('resume.urls')),
+    # Phase 2 - ATS Intelligence URLs
+    path('api/ats/', include('ats_intelligence.urls')),
 ]
 
 # Serve media files in development
