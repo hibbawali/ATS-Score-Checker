@@ -251,47 +251,110 @@ class SemanticMatcher:
         return matching_skills, missing_skills
     
     def _calculate_skill_similarity(self, resume_text: str, skill: str) -> float:
-        """Calculate semantic similarity between resume and a specific skill"""
+        """Calculate semantic similarity between resume and a specific skill with improved accuracy"""
         try:
-            # Create skill variations for better matching
-            skill_variations = [
-                skill,
-                f"{skill} development",
-                f"{skill} programming",
+            # Improved skill variations for better semantic matching
+            skill_lower = skill.lower()
+            
+            # Create contextual skill representations  
+            skill_contexts = [
+                skill,  # Original skill name
                 f"experience with {skill}",
-                f"{skill} framework"
+                f"{skill} development", 
+                f"{skill} programming",
+                f"proficient in {skill}",
+                f"skilled in {skill}",
+                f"knowledge of {skill}",
+                f"familiar with {skill}",
+                f"working with {skill}",
+                f"using {skill}"
             ]
             
-            # Encode resume and skill variations
-            all_texts = [resume_text] + skill_variations
+            # Add technology-specific contexts
+            if any(tech in skill_lower for tech in ['javascript', 'python', 'java', 'react', 'angular', 'vue']):
+                skill_contexts.extend([
+                    f"{skill} developer",
+                    f"{skill} engineer", 
+                    f"full stack {skill}",
+                    f"frontend {skill}",
+                    f"backend {skill}"
+                ])
+            
+            # Extract relevant sections from resume for better context matching
+            resume_sections = self._extract_resume_sections(resume_text)
+            resume_content = f"{resume_sections.get('skills', '')} {resume_sections.get('experience', '')}"
+            
+            if not resume_content.strip():
+                resume_content = resume_text
+            
+            # Encode resume content and skill contexts
+            all_texts = [resume_content] + skill_contexts
             embeddings = self.model.encode(all_texts)
             
-            # Calculate similarity between resume and each skill variation
+            # Calculate similarity between resume and each skill context
             resume_embedding = embeddings[0:1]
             skill_embeddings = embeddings[1:]
             
             similarities = cosine_similarity(resume_embedding, skill_embeddings)
-            return float(np.max(similarities))
+            max_similarity = float(np.max(similarities))
+            
+            # Apply context boost for exact keyword matches
+            if skill_lower in resume_text.lower():
+                max_similarity = min(1.0, max_similarity + 0.1)  # Small boost for exact matches
+            
+            return max_similarity
             
         except Exception as e:
             logger.error(f"Error calculating skill similarity for {skill}: {e}")
             return 0.0
     
     def _extract_skill_context(self, resume_text: str, skill: str) -> str:
-        """Extract context around where a skill is mentioned"""
+        """Extract context around where a skill is mentioned with improved accuracy"""
         skill_lower = skill.lower()
         
         # Split into sentences and find mentions
-        sentences = re.split(r'[.!?]\s+', resume_text)
+        sentences = re.split(r'[.!?\n]\s*', resume_text)
         
-        for sentence in sentences:
+        # Look for the skill in sentences
+        best_context = ""
+        max_relevance = 0
+        
+        for i, sentence in enumerate(sentences):
+            sentence = sentence.strip()
+            if not sentence:
+                continue
+                
             if skill_lower in sentence.lower():
-                return sentence.strip()
+                # Include surrounding context for better understanding
+                context_start = max(0, i - 1)  
+                context_end = min(len(sentences), i + 2)
+                context = ' '.join(sentences[context_start:context_end]).strip()
+                
+                # Score context relevance (longer, more detailed contexts are better)
+                relevance = len(context) + (100 if any(word in context.lower() for word in [
+                    'experience', 'proficient', 'skilled', 'developed', 'worked', 'used'
+                ]) else 0)
+                
+                if relevance > max_relevance:
+                    max_relevance = relevance
+                    best_context = context
         
-        return ""
+        # If no good context found, try broader search
+        if not best_context:
+            # Look for skill variations
+            skill_variations = [skill_lower, skill_lower.replace('.', ''), skill_lower.replace(' ', '')]
+            for variation in skill_variations:
+                for sentence in sentences:
+                    if variation in sentence.lower():
+                        best_context = sentence.strip()
+                        break
+                if best_context:
+                    break
+        
+        return best_context or ""
     
     def _analyze_skill_gaps(self, matching_skills: List[Dict], missing_skills: List[str]) -> Dict[str, any]:
-        """Analyze skill gaps and categorize them"""
+        """Analyze skill gaps and categorize them with improved logic"""
         required_missing = []
         preferred_missing = []
         strong_matches = []
@@ -304,17 +367,36 @@ class SemanticMatcher:
             else:
                 weak_matches.append(skill_match)
         
-        # Categorize missing skills by priority
-        # Note: We'd need additional context to properly categorize missing skills
-        # For now, assume all missing skills from required list are required_missing
-        required_missing = missing_skills  # Simplified for now
+        # Properly categorize missing skills by required/preferred status
+        for skill in missing_skills:
+            # Check if any matching skill indicates this was required or preferred
+            is_required = any(match['skill'] == skill and match['is_required'] 
+                            for match in matching_skills if 'is_required' in match)
+            
+            if is_required:
+                required_missing.append(skill)
+            else:
+                preferred_missing.append(skill)
+        
+        # If we can't determine, use heuristics
+        if not required_missing and not preferred_missing and missing_skills:
+            # Core technical skills are likely required
+            core_skills = ['python', 'java', 'javascript', 'react', 'angular', 'sql']
+            for skill in missing_skills:
+                if any(core in skill.lower() for core in core_skills):
+                    required_missing.append(skill) 
+                else:
+                    preferred_missing.append(skill)
+        
+        total_skills = len(matching_skills) + len(missing_skills)
+        match_percentage = (len(matching_skills) / total_skills * 100) if total_skills > 0 else 0
         
         return {
             'strong_matches': strong_matches,
             'weak_matches': weak_matches,
             'required_missing': required_missing,
             'preferred_missing': preferred_missing,
-            'match_percentage': len(matching_skills) / (len(matching_skills) + len(missing_skills)) * 100 if (matching_skills or missing_skills) else 0
+            'match_percentage': match_percentage
         }
     
     def _generate_recommendations(

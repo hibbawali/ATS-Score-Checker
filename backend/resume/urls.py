@@ -1,8 +1,11 @@
 from django.urls import path
 from . import views
 
+app_name = 'resume'
+
 urlpatterns = [
-    # Resume upload and analysis endpoints will be added here
-    # path('upload/', views.ResumeUploadView.as_view(), name='resume-upload'),
-    # path('history/', views.ResumeHistoryView.as_view(), name='resume-history'),
+    # Phase 3.2 - Resume Analysis Engine endpoints
+    path('upload/', views.upload_resume, name='upload-resume'),
+    path('list/', views.list_user_resumes, name='list-resumes'),
+    path('<uuid:resume_id>/', views.get_resume_data, name='get-resume-data'),
 ]

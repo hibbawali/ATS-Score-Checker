@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key-change-in-pro
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0'] if DEBUG else []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'testserver'] if DEBUG else []
 
 
 # Application definition
@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'semantic_matcher',
     'recommendation_engine',
     'scoring_engine',
+    # Phase 3 - AI Service Layer
+    'ai_service',
 ]
 
 MIDDLEWARE = [
@@ -199,3 +201,45 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# AI Service Configuration
+# Environment variables for AI providers (optional - no defaults for security)
+AI_PROVIDER = os.getenv('AI_PROVIDER', 'mock')  # Default to mock for development
+
+# Gemini AI Configuration
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')  # No default - must be set in production
+GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-pro')
+GEMINI_MAX_TOKENS = os.getenv('GEMINI_MAX_TOKENS', '2048')
+GEMINI_TEMPERATURE = os.getenv('GEMINI_TEMPERATURE', '0.7')
+
+# OpenAI Configuration  
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')  # No default - must be set if using OpenAI
+OPENAI_MODEL = os.getenv('OPENAI_MODEL', 'gpt-4')
+OPENAI_BASE_URL = os.getenv('OPENAI_BASE_URL', 'https://api.openai.com/v1')
+OPENAI_MAX_TOKENS = os.getenv('OPENAI_MAX_TOKENS', '2048')
+OPENAI_TEMPERATURE = os.getenv('OPENAI_TEMPERATURE', '0.7')
+
+# Claude AI Configuration
+CLAUDE_API_KEY = os.getenv('CLAUDE_API_KEY')  # No default - must be set if using Claude
+CLAUDE_MODEL = os.getenv('CLAUDE_MODEL', 'claude-3-sonnet-20240229')
+CLAUDE_BASE_URL = os.getenv('CLAUDE_BASE_URL', 'https://api.anthropic.com/v1')
+CLAUDE_MAX_TOKENS = os.getenv('CLAUDE_MAX_TOKENS', '2048')
+CLAUDE_TEMPERATURE = os.getenv('CLAUDE_TEMPERATURE', '0.7')
+
+# AI Service Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'ai_service': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

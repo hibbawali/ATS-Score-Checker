@@ -76,89 +76,133 @@ class EnhancedRecommendationEngine:
         scoring_result: object, 
         semantic_match_result: Optional[object]
     ) -> List[Dict[str, any]]:
-        """Generate high-priority recommendations based on lowest scores"""
+        """Generate high-priority recommendations based on lowest scores with improved logic"""
         recommendations = []
         
-        # Get individual scores
-        scores = {
-            'JD Match': getattr(scoring_result, 'jd_match_score', 0),
-            'Skills': getattr(scoring_result, 'skills_score', 0),
-            'Experience': getattr(scoring_result, 'experience_score', 0),
-            'Projects': getattr(scoring_result, 'projects_score', 0),
-            'Education': getattr(scoring_result, 'education_score', 0),
-            'Grammar': getattr(scoring_result, 'grammar_score', 0),
-            'Formatting': getattr(scoring_result, 'formatting_score', 0)
+        # Get individual scores with their weights for impact calculation
+        scores_with_weights = {
+            'JD Match': (getattr(scoring_result, 'jd_match_score', 0), 0.35),
+            'Skills': (getattr(scoring_result, 'skills_score', 0), 0.20),
+            'Experience': (getattr(scoring_result, 'experience_score', 0), 0.15),
+            'Projects': (getattr(scoring_result, 'projects_score', 0), 0.10),
+            'Education': (getattr(scoring_result, 'education_score', 0), 0.10),
+            'Grammar': (getattr(scoring_result, 'grammar_score', 0), 0.05),
+            'Formatting': (getattr(scoring_result, 'formatting_score', 0), 0.05)
         }
         
-        # Find the lowest scoring categories
-        sorted_scores = sorted(scores.items(), key=lambda x: x[1])
+        # Calculate impact potential (low score * high weight = high impact opportunity)
+        impact_opportunities = []
+        for category, (score, weight) in scores_with_weights.items():
+            if score < 80:  # Only consider categories that have room for improvement
+                # Impact = potential improvement * weight
+                potential_improvement = 85 - score  # Target score of 85
+                impact = potential_improvement * weight
+                impact_opportunities.append((category, score, impact))
         
-        # Generate recommendations for the 3 lowest scoring areas
-        for category, score in sorted_scores[:3]:
-            if score < 70:  # Only recommend for scores below 70
-                recommendation = self._get_priority_recommendation(category, score, semantic_match_result)
-                if recommendation:
-                    recommendations.append(recommendation)
+        # Sort by impact potential (highest impact first)
+        impact_opportunities.sort(key=lambda x: x[2], reverse=True)
         
-        return recommendations
+        # Generate recommendations for top 3 highest impact opportunities
+        for category, score, impact in impact_opportunities[:3]:
+            recommendation = self._get_priority_recommendation(category, score, semantic_match_result, impact)
+            if recommendation:
+                recommendations.append(recommendation)
+        
+        # Remove duplicate recommendations by type and title
+        unique_recommendations = []
+        seen_types = set()
+        
+        for recommendation in recommendations:
+            rec_type = recommendation.get('category', '')
+            rec_title = recommendation.get('title', '')
+            unique_key = f"{rec_type}_{rec_title}"
+            
+            if unique_key not in seen_types:
+                seen_types.add(unique_key)
+                unique_recommendations.append(recommendation)
+        
+        return unique_recommendations
     
     def _get_priority_recommendation(
         self, 
         category: str, 
         score: int, 
-        semantic_match_result: Optional[object]
+        semantic_match_result: Optional[object],
+        impact: float
     ) -> Dict[str, any]:
-        """Get specific priority recommendation for a category"""
+        """Get specific priority recommendation for a category with impact-based priority"""
+        
+        # Determine priority level based on impact
+        if impact > 10:
+            priority = 'critical'
+        elif impact > 5:
+            priority = 'high'
+        else:
+            priority = 'medium'
         
         recommendations_map = {
             'JD Match': {
                 'title': 'Improve Job Description Alignment',
+                'priority': priority,
                 'impact': 'high',
                 'effort': 'medium',
-                'action': 'Tailor your resume to include more keywords and skills from the job posting',
+                'action': 'Customize your resume to better match the job posting requirements',
+                'explanation': f'Your JD match score is {score}/100. This category has 35% weight in ATS scoring, making it the most impactful area to improve.',
                 'specifics': self._get_jd_match_specifics(semantic_match_result)
             },
             'Skills': {
-                'title': 'Enhance Technical Skills Section',
+                'title': 'Strengthen Technical Skills Section',
+                'priority': priority,
                 'impact': 'high', 
                 'effort': 'low',
-                'action': 'Add more relevant technical skills and technologies to your resume',
-                'specifics': ['List programming languages you know', 'Include frameworks and tools you\'ve used', 'Add certifications']
+                'action': 'Add more relevant technical skills and demonstrate proficiency levels',
+                'explanation': f'Your skills score is {score}/100. This category represents 20% of your overall score and is relatively easy to improve.',
+                'specifics': ['List specific programming languages you know', 'Include frameworks and tools you\'ve used', 'Add relevant certifications or courses']
             },
             'Experience': {
-                'title': 'Strengthen Experience Descriptions',
-                'impact': 'high',
+                'title': 'Enhance Work Experience Descriptions',
+                'priority': priority,
+                'impact': 'medium',
                 'effort': 'medium',
                 'action': 'Add quantified achievements and specific accomplishments to your work experience',
-                'specifics': ['Include numbers, percentages, and metrics', 'Use strong action verbs', 'Describe impact and results']
+                'explanation': f'Your experience score is {score}/100. This category is worth 15% and greatly benefits from specific metrics and results.',
+                'specifics': ['Include numbers, percentages, and dollar amounts', 'Use strong action verbs to start bullet points', 'Describe the impact and results of your work']
             },
             'Projects': {
                 'title': 'Showcase Technical Projects',
+                'priority': priority,
                 'impact': 'medium',
                 'effort': 'medium',
-                'action': 'Add a projects section highlighting technical work and implementations',
-                'specifics': ['Include personal coding projects', 'Mention technologies used', 'Add GitHub links if available']
+                'action': 'Add a dedicated projects section highlighting technical implementations',
+                'explanation': f'Your projects score is {score}/100. This 10% category demonstrates practical application of your skills.',
+                'specifics': ['Include personal coding projects or portfolio work', 'Mention technologies used and problems solved', 'Add GitHub links or live project URLs if available']
             },
             'Education': {
-                'title': 'Improve Education Section',
+                'title': 'Optimize Education Section',
+                'priority': 'low',  # Education is often harder to change
                 'impact': 'low',
                 'effort': 'low',
-                'action': 'Enhance your education section with relevant details',
-                'specifics': ['List relevant coursework', 'Add certifications', 'Include academic projects']
+                'action': 'Enhance your education section with relevant details and achievements',
+                'explanation': f'Your education score is {score}/100. While this is 10% of your score, focus on highlighting relevant coursework and achievements.',
+                'specifics': ['List relevant coursework and academic projects', 'Add certifications and professional development', 'Include GPA if above 3.5 and recent graduate']
             },
             'Grammar': {
-                'title': 'Improve Writing Quality',
+                'title': 'Improve Writing Quality and Clarity',
+                'priority': priority,
                 'impact': 'medium',
                 'effort': 'low',
-                'action': 'Proofread and improve grammar throughout your resume',
-                'specifics': ['Check spelling and grammar', 'Use consistent tense', 'Avoid weak phrases']
+                'action': 'Review and improve grammar, spelling, and writing quality throughout your resume',
+                'explanation': f'Your grammar score is {score}/100. Poor grammar can immediately disqualify candidates despite this being only 5% of the score.',
+                'specifics': ['Use Grammarly or similar tools to check for errors', 'Ensure consistent verb tense throughout', 'Avoid first-person pronouns (I, my, our)', 'Keep bullet points concise and parallel']
             },
             'Formatting': {
-                'title': 'Optimize ATS Formatting',
+                'title': 'Optimize ATS-Friendly Formatting',
+                'priority': priority,
                 'impact': 'medium',
                 'effort': 'low',
-                'action': 'Improve resume formatting for better ATS compatibility',
-                'specifics': ['Use consistent bullet points', 'Add clear section headers', 'Avoid complex layouts']
+                'action': 'Improve resume formatting for better ATS compatibility and readability',
+                'explanation': f'Your formatting score is {score}/100. Poor formatting can prevent ATS systems from parsing your resume correctly.',
+                'specifics': ['Use consistent bullet points and clear section headers', 'Avoid complex layouts, tables, and graphics', 'Save as PDF to preserve formatting', 'Use standard fonts like Arial or Calibri']
             }
         }
         
@@ -166,7 +210,8 @@ class EnhancedRecommendationEngine:
         if rec:
             rec['category'] = category
             rec['current_score'] = score
-            rec['target_improvement'] = min(25, 85 - score)  # Aim for 85+ or improve by 25 points
+            rec['potential_improvement'] = min(25, 85 - score)
+            rec['estimated_impact'] = round(impact, 1)
             
         return rec
     

@@ -6,22 +6,26 @@ import re
 from typing import Dict, List, Optional
 from dataclasses import dataclass
 
-# Import Phase 1 check engines
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-
+# Import Phase 1 check engines with error handling
 try:
+    import sys
+    import os
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+    
     from lib.parseabilityCheck import checkParseability
     from lib.structureCheck import checkStructure
     from lib.formattingCheck import checkFormatting
     from lib.contentQualityCheck import checkContentQuality
 except ImportError:
-    # Fallback for testing
-    checkParseability = lambda text, meta: {'score': 85, 'issues': []}
-    checkStructure = lambda text: {'score': 80, 'issues': []}
-    checkFormatting = lambda text: {'score': 90, 'issues': []}
-    checkContentQuality = lambda text: {'score': 75, 'issues': []}
+    # Fallback for testing - create mock functions
+    def checkParseability(text, meta): 
+        return {'score': 85, 'issues': []}
+    def checkStructure(text): 
+        return {'score': 80, 'issues': []}
+    def checkFormatting(text): 
+        return {'score': 90, 'issues': []}
+    def checkContentQuality(text): 
+        return {'score': 75, 'issues': []}
 
 
 @dataclass
@@ -411,7 +415,7 @@ class AdvancedScoringEngine:
     
     def _generate_recommendations(self, *scores, semantic_match_result=None) -> List[str]:
         """Generate overall recommendations based on all scores"""
-        jd_match, skills, experience, projects, education, grammar, formatting = scores
+        jd_match, skills, experience, projects, education, grammar, formatting = scores[:7]
         recommendations = []
         
         # JD Match recommendations

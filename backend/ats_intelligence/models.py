@@ -32,6 +32,12 @@ class JobDescription(models.Model):
         verbose_name = 'Job Description'
         verbose_name_plural = 'Job Descriptions'
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', '-created_at']),
+            models.Index(fields=['job_title']),
+            models.Index(fields=['company_name']),
+        ]
+        constraints = []
     
     def __str__(self):
         return f"{self.job_title} - {self.user.full_name}"
@@ -64,6 +70,28 @@ class SemanticAnalysis(models.Model):
         verbose_name_plural = 'Semantic Analyses'
         ordering = ['-created_at']
         unique_together = ['resume', 'job_description']
+        indexes = [
+            models.Index(fields=['user', '-created_at']),
+            models.Index(fields=['resume', '-created_at']),
+            models.Index(fields=['job_description', '-created_at']),
+            models.Index(fields=['overall_semantic_match']),
+            models.Index(fields=['skills_match_score']),
+            models.Index(fields=['model_version']),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(overall_semantic_match__gte=0.0) & models.Q(overall_semantic_match__lte=1.0),
+                name='semantic_overall_match_valid_range'
+            ),
+            models.CheckConstraint(
+                check=models.Q(skills_match_score__gte=0.0) & models.Q(skills_match_score__lte=1.0),
+                name='semantic_skills_match_valid_range'
+            ),
+            models.CheckConstraint(
+                check=models.Q(experience_match_score__gte=0.0) & models.Q(experience_match_score__lte=1.0),
+                name='semantic_experience_match_valid_range'
+            ),
+        ]
     
     def __str__(self):
         return f"Semantic Analysis: {self.overall_semantic_match:.1%} match"
@@ -103,6 +131,48 @@ class AdvancedAnalysis(models.Model):
         verbose_name = 'Advanced Analysis'
         verbose_name_plural = 'Advanced Analyses'
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', '-created_at']),
+            models.Index(fields=['resume', '-created_at']),
+            models.Index(fields=['job_description', '-created_at']),
+            models.Index(fields=['overall_score']),
+            models.Index(fields=['analysis_version', '-created_at']),
+            models.Index(fields=['semantic_analysis']),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(overall_score__gte=0) & models.Q(overall_score__lte=100),
+                name='advanced_overall_score_valid_range'
+            ),
+            models.CheckConstraint(
+                check=models.Q(jd_match_score__gte=0) & models.Q(jd_match_score__lte=100),
+                name='advanced_jd_match_score_valid_range'
+            ),
+            models.CheckConstraint(
+                check=models.Q(skills_score__gte=0) & models.Q(skills_score__lte=100),
+                name='advanced_skills_score_valid_range'
+            ),
+            models.CheckConstraint(
+                check=models.Q(experience_score__gte=0) & models.Q(experience_score__lte=100),
+                name='advanced_experience_score_valid_range'
+            ),
+            models.CheckConstraint(
+                check=models.Q(projects_score__gte=0) & models.Q(projects_score__lte=100),
+                name='advanced_projects_score_valid_range'
+            ),
+            models.CheckConstraint(
+                check=models.Q(education_score__gte=0) & models.Q(education_score__lte=100),
+                name='advanced_education_score_valid_range'
+            ),
+            models.CheckConstraint(
+                check=models.Q(grammar_score__gte=0) & models.Q(grammar_score__lte=100),
+                name='advanced_grammar_score_valid_range'
+            ),
+            models.CheckConstraint(
+                check=models.Q(formatting_score__gte=0) & models.Q(formatting_score__lte=100),
+                name='advanced_formatting_score_valid_range'
+            ),
+        ]
     
     def __str__(self):
         return f"Advanced Analysis for {self.resume.original_filename} (Score: {self.overall_score})"

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UploadedResume, ResumeAnalysis
+from .models import UploadedResume, ResumeAnalysis, StructuredResumeData
 
 
 @admin.register(UploadedResume)
@@ -53,6 +53,56 @@ class ResumeAnalysisAdmin(admin.ModelAdmin):
         }),
         ('Metadata', {
             'fields': ('id', 'created_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(StructuredResumeData)
+class StructuredResumeDataAdmin(admin.ModelAdmin):
+    list_display = ('full_name', 'user', 'resume', 'extraction_confidence', 'total_skills_count', 'has_complete_profile', 'created_at')
+    list_filter = ('extraction_version', 'has_complete_profile', 'created_at')
+    search_fields = ('full_name', 'email', 'user__full_name', 'resume__original_filename')
+    readonly_fields = ('id', 'created_at', 'updated_at', 'total_skills_count', 'total_experience_years', 'has_complete_profile')
+    raw_id_fields = ('resume', 'user')
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('user', 'resume', 'extraction_version', 'extraction_confidence')
+        }),
+        ('Personal Information', {
+            'fields': ('full_name', 'email', 'phone', 'linkedin_url', 'github_url', 'portfolio_url', 'location')
+        }),
+        ('Professional Summary', {
+            'fields': ('professional_summary',),
+            'classes': ('collapse',)
+        }),
+        ('Skills', {
+            'fields': ('technical_skills', 'soft_skills', 'programming_languages', 'frameworks', 'databases', 'cloud_platforms', 'tools'),
+            'classes': ('collapse',)
+        }),
+        ('Experience & Projects', {
+            'fields': ('work_experience', 'projects'),
+            'classes': ('collapse',)
+        }),
+        ('Education & Certifications', {
+            'fields': ('education', 'certifications'),
+            'classes': ('collapse',)
+        }),
+        ('Additional Information', {
+            'fields': ('languages', 'achievements', 'publications', 'volunteer_experience'),
+            'classes': ('collapse',)
+        }),
+        ('Analysis Metadata', {
+            'fields': ('sections_found', 'processing_notes'),
+            'classes': ('collapse',)
+        }),
+        ('Computed Properties', {
+            'fields': ('total_skills_count', 'total_experience_years', 'has_complete_profile'),
+            'classes': ('collapse',)
+        }),
+        ('Timestamps', {
+            'fields': ('id', 'created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )
